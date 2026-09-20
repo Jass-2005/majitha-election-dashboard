@@ -1,7 +1,7 @@
 import React from 'react';
 import { LayoutDashboard, MapPin, Users, FileSpreadsheet, ExternalLink, X, ClipboardList } from 'lucide-react';
 
-export default function Sidebar({ activeTab, onTabChange, isOpen, onClose }) {
+export default function Sidebar({ activeTab, onTabChange, isOpen, onClose, t }) {
   const handleNavClick = (tab) => {
     if (onTabChange) onTabChange(tab);
     if (onClose) onClose();
@@ -53,7 +53,7 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onClose }) {
           >
             <div className="active-rail-indicator" />
             <LayoutDashboard size={20} />
-            <span className="sidebar-label hide-desktop">Dashboard</span>
+            <span className="sidebar-label hide-desktop">{t?.nav_dashboard || 'Dashboard'}</span>
           </button>
 
           <button 
@@ -62,7 +62,7 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onClose }) {
             title="Party Intelligence Hub"
           >
             <Users size={20} />
-            <span className="sidebar-label hide-desktop">Party Hub</span>
+            <span className="sidebar-label hide-desktop">{t?.nav_party_hub || 'Party Hub'}</span>
           </button>
 
           <button 
@@ -71,7 +71,7 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onClose }) {
             title="187 Booths Explorer"
           >
             <MapPin size={20} />
-            <span className="sidebar-label hide-desktop">187 Booths</span>
+            <span className="sidebar-label hide-desktop">{t?.nav_booths || '187 Booths'}</span>
           </button>
 
           <a 
@@ -82,7 +82,7 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onClose }) {
             onClick={() => { if (onClose) onClose(); }}
           >
             <FileSpreadsheet size={20} />
-            <span className="sidebar-label hide-desktop">Master Excel</span>
+            <span className="sidebar-label hide-desktop">{t?.nav_master_excel || 'Master Excel'}</span>
           </a>
 
           <a 
@@ -93,7 +93,7 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onClose }) {
             onClick={() => { if (onClose) onClose(); }}
           >
             <ClipboardList size={20} />
-            <span className="sidebar-label hide-desktop">Executive Report (Word)</span>
+            <span className="sidebar-label hide-desktop">{t?.nav_exec_report || 'Executive Report (Word)'}</span>
           </a>
 
           <a 

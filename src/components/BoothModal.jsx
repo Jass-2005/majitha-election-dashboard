@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { X, Printer, Target, Download, FileText } from 'lucide-react';
+import { formatStatus } from '../translations';
 
-export default function BoothModal({ booth, onClose }) {
-  const [mpLang, setMpLang] = useState('PA');
+export default function BoothModal({ booth, onClose, language = 'en', t }) {
+  const [mpLang, setMpLang] = useState(() => (language === 'pa' ? 'PA' : 'EN'));
   if (!booth) return null;
 
+  const isPa = language === 'pa';
   const d22 = booth.data_2022 || {};
   const d24 = booth.data_2024 || {};
   const comp = booth.comparison || {};
@@ -25,6 +27,11 @@ export default function BoothModal({ booth, onClose }) {
     }, 1000);
   };
 
+  const primaryVillage = isPa ? (booth.village_punjabi || booth.village_pa) : (booth.village_english || booth.village_en);
+  const secondaryVillage = isPa ? (booth.village_english || booth.village_en) : (booth.village_punjabi || booth.village_pa);
+  const rawStatus = comp.status_label || booth.status_label || (booth.is_flipped ? 'Flipped' : 'Retained');
+  const statusLabel = formatStatus(rawStatus, language);
+
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -32,7 +39,7 @@ export default function BoothModal({ booth, onClose }) {
         <div className="dsidein-print-watermark" aria-hidden="true">
           <img src="./dsidein_logo_transparent.png" alt="Dsidein" className="watermark-logo-img" />
           <div className="watermark-brand-name">DSIDEIN</div>
-          <div className="watermark-sub-name">13-MAJITHA BOOTH INTELLIGENCE</div>
+          <div className="watermark-sub-name">{isPa ? '13-ਮਜੀਠਾ ਬੂਥ ਖੁਫੀਆ ਰਿਪੋਰਟ' : '13-MAJITHA BOOTH INTELLIGENCE'}</div>
           <div className="watermark-url">https://dsidein.com/majitha-2022-2024</div>
         </div>
 
@@ -40,9 +47,9 @@ export default function BoothModal({ booth, onClose }) {
         <div className="print-dossier-banner">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div className="print-dossier-title">13-MAJITHA ASSEMBLY SEGMENT — BOOTH DOSSIER</div>
+              <div className="print-dossier-title">{t?.modal_title || '13-MAJITHA ASSEMBLY SEGMENT — BOOTH DOSSIER'}</div>
               <div className="print-dossier-sub">
-                Election Commission Data: 2022 Vidhan Sabha vs 2024 Lok Sabha Polling (Amritsar PC)
+                {t?.modal_sub || 'Election Commission Data: 2022 Vidhan Sabha vs 2024 Lok Sabha Polling (Amritsar PC)'}
               </div>
             </div>
             <div style={{ textAlign: 'right', fontSize: '8.5pt', color: '#334155' }}>
@@ -56,24 +63,24 @@ export default function BoothModal({ booth, onClose }) {
         <div className="modal-header">
           <div>
             <div className="modal-badges-row" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="brand-badge">Booth #{booth.booth_no}</span>
+              <span className="brand-badge">{t?.modal_booth_prefix || 'Booth #'}{booth.booth_no}</span>
               <span className={`status-badge ${comp.is_flip ? 'flipped' : 'retained'}`}>
-                {comp.status_label || booth.status_label || (booth.is_flipped ? 'Flipped' : 'Retained')}
+                {statusLabel}
               </span>
             </div>
-            <h2 className="modal-village-title">{booth.village_english || booth.village_en}</h2>
-            <p className="modal-village-sub punjabi-text">
-              {booth.village_punjabi || booth.village_pa}
+            <h2 className={`modal-village-title ${isPa ? 'punjabi-font' : ''}`}>{primaryVillage}</h2>
+            <p className={`modal-village-sub ${!isPa ? 'punjabi-text' : ''}`}>
+              {secondaryVillage}
             </p>
           </div>
           <div className="modal-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button 
               className="btn-print-modal no-print" 
               onClick={handlePrintBooth}
-              title="Export / Print this Booth Dossier as PDF"
+              title={t?.action_export_pdf_title || 'Export / Print this Booth Dossier as PDF'}
             >
               <Printer size={15} />
-              <span>Export PDF</span>
+              <span>{t?.action_export_pdf || 'Export PDF'}</span>
             </button>
             <button className="modal-close no-print" onClick={onClose} aria-label="Close Modal">
               <X size={20} />
@@ -85,7 +92,7 @@ export default function BoothModal({ booth, onClose }) {
         <div className="compare-grid">
           {/* 2022 Vidhan Sabha Column */}
           <div className="year-card">
-            <div className="year-title">2022 Vidhan Sabha Election</div>
+            <div className="year-title">{isPa ? '2022 ਵਿਧਾਨ ਸਭਾ ਚੋਣ' : '2022 Vidhan Sabha Election'}</div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
               <span className={`badge-winner ${d22.winner_party}`}>
                 {d22.winner_party} Won
@@ -141,27 +148,27 @@ export default function BoothModal({ booth, onClose }) {
 
             {/* Total 2022 */}
             <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', marginTop: '12px', fontSize: '0.8125rem', color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
-              <span>Total Polled:</span>
-              <strong style={{ color: 'var(--text-primary)' }}>{d22.total} votes</strong>
+              <span>{isPa ? 'ਕੁੱਲ ਪੋਲਿੰਗ:' : 'Total Polled:'}</span>
+              <strong style={{ color: 'var(--text-primary)' }}>{d22.total} {isPa ? 'ਵੋਟਾਂ' : 'votes'}</strong>
             </div>
           </div>
 
           {/* 2024 Lok Sabha Column */}
           <div className="year-card">
-            <div className="year-title">2024 Lok Sabha Election</div>
+            <div className="year-title">{isPa ? '2024 ਲੋਕ ਸਭਾ ਚੋਣ' : '2024 Lok Sabha Election'}</div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
               <span className={`badge-winner ${d24.winner_party}`}>
-                {d24.winner_party} Won
+                {d24.winner_party} {isPa ? 'ਜਿੱਤ' : 'Won'}
               </span>
               <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                +{d24.margin} lead
+                +{d24.margin} {isPa ? 'ਲੀਡ' : 'lead'}
               </span>
             </div>
 
             {/* SAD Bar (Anil Joshi) */}
             <div className="vote-bar-wrap">
               <div className="vote-bar-label">
-                <span>SAD (Anil Joshi)</span>
+                <span>{isPa ? 'ਸ਼੍ਰੋ.ਅ.ਦ (ਅਨਿਲ ਜੋਸ਼ੀ)' : 'SAD (Anil Joshi)'}</span>
                 <span><strong>{d24.sad}</strong> ({d24.sad_pct}%)</span>
               </div>
               <div className="vote-bar-track">
@@ -172,7 +179,7 @@ export default function BoothModal({ booth, onClose }) {
             {/* AAP Bar (Kuldeep Singh Dhaliwal) */}
             <div className="vote-bar-wrap">
               <div className="vote-bar-label">
-                <span>AAP (Kuldeep Dhaliwal)</span>
+                <span>{isPa ? 'ਆਪ (ਕੁਲਦੀਪ ਧਾਲੀਵਾਲ)' : 'AAP (Kuldeep Dhaliwal)'}</span>
                 <span><strong>{d24.aap}</strong> ({d24.aap_pct}%)</span>
               </div>
               <div className="vote-bar-track">
@@ -183,7 +190,7 @@ export default function BoothModal({ booth, onClose }) {
             {/* INC Bar (Gurjeet Singh Aujla) */}
             <div className="vote-bar-wrap">
               <div className="vote-bar-label">
-                <span>INC (Gurjeet Singh Aujla)</span>
+                <span>{isPa ? 'ਕਾਂਗਰਸ (ਗੁਰਜੀਤ ਸਿੰਘ ਔਜਲਾ)' : 'INC (Gurjeet Singh Aujla)'}</span>
                 <span><strong>{d24.inc}</strong> ({d24.inc_pct}%)</span>
               </div>
               <div className="vote-bar-track">
@@ -194,7 +201,7 @@ export default function BoothModal({ booth, onClose }) {
             {/* BJP Bar (Taranjit Singh Sandhu) */}
             <div className="vote-bar-wrap">
               <div className="vote-bar-label">
-                <span>BJP (Taranjit Sandhu)</span>
+                <span>{isPa ? 'ਭਾਜਪਾ (ਤਰਨਜੀਤ ਸਿੰਘ ਸੰਧੂ)' : 'BJP (Taranjit Sandhu)'}</span>
                 <span><strong>{d24.bjp}</strong> ({d24.bjp_pct}%)</span>
               </div>
               <div className="vote-bar-track">
@@ -204,8 +211,8 @@ export default function BoothModal({ booth, onClose }) {
 
             {/* Total 2024 */}
             <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', marginTop: '8px', fontSize: '0.8125rem', color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
-              <span>Total Polled:</span>
-              <strong style={{ color: 'var(--text-primary)' }}>{d24.total} votes</strong>
+              <span>{isPa ? 'ਕੁੱਲ ਪੋਲਿੰਗ:' : 'Total Polled:'}</span>
+              <strong style={{ color: 'var(--text-primary)' }}>{d24.total} {isPa ? 'ਵੋਟਾਂ' : 'votes'}</strong>
             </div>
           </div>
         </div>
@@ -213,35 +220,35 @@ export default function BoothModal({ booth, onClose }) {
         {/* Turnout & Swing Summary Card */}
         <div style={{ background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-md)', padding: '16px', border: '1px solid var(--border-subtle)', marginBottom: '16px' }}>
           <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>
-            Turnout & Vote Shift Analysis
+            {isPa ? 'ਵੋਟਰ ਪੋਲਿੰਗ ਅਤੇ ਵੋਟ ਤਬਦੀਲੀ ਵਿਸ਼ਲੇਸ਼ਣ' : 'Turnout & Vote Shift Analysis'}
           </h4>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', fontSize: '0.8125rem' }}>
             <div>
-              <span style={{ color: 'var(--text-muted)' }}>Turnout Shift:</span>
+              <span style={{ color: 'var(--text-muted)' }}>{isPa ? 'ਪੋਲਿੰਗ ਫ਼ਰਕ:' : 'Turnout Shift:'}</span>
               <div style={{ fontWeight: 700, color: (comp.turnout_diff || booth.turnout_diff || 0) >= 0 ? 'var(--color-gain)' : 'var(--color-loss)' }}>
-                {(comp.turnout_diff || booth.turnout_diff || 0) > 0 ? '+' : ''}{(comp.turnout_diff || booth.turnout_diff || 0)} votes ({(comp.turnout_pct || booth.turnout_pct || 0)}%)
+                {(comp.turnout_diff || booth.turnout_diff || 0) > 0 ? '+' : ''}{(comp.turnout_diff || booth.turnout_diff || 0)} {isPa ? 'ਵੋਟਾਂ' : 'votes'} ({(comp.turnout_pct || booth.turnout_pct || 0)}%)
               </div>
             </div>
             <div>
-              <span style={{ color: 'var(--text-muted)' }}>SAD Swing:</span>
+              <span style={{ color: 'var(--text-muted)' }}>{isPa ? 'ਸ਼੍ਰੋ.ਅ.ਦ ਸਵਿੰਗ:' : 'SAD Swing:'}</span>
               <div style={{ fontWeight: 700, color: (comp.sad_swing || booth.sad_swing || 0) >= 0 ? 'var(--color-gain)' : 'var(--color-loss)' }}>
                 {(comp.sad_swing || booth.sad_swing || 0) > 0 ? '+' : ''}{(comp.sad_swing || booth.sad_swing || 0)}%
               </div>
             </div>
             <div>
-              <span style={{ color: 'var(--text-muted)' }}>AAP Swing:</span>
+              <span style={{ color: 'var(--text-muted)' }}>{isPa ? 'ਆਪ ਸਵਿੰਗ:' : 'AAP Swing:'}</span>
               <div style={{ fontWeight: 700, color: (comp.aap_swing || booth.aap_swing || 0) >= 0 ? 'var(--color-gain)' : 'var(--color-loss)' }}>
                 {(comp.aap_swing || booth.aap_swing || 0) > 0 ? '+' : ''}{(comp.aap_swing || booth.aap_swing || 0)}%
               </div>
             </div>
             <div>
-              <span style={{ color: 'var(--text-muted)' }}>INC Swing:</span>
+              <span style={{ color: 'var(--text-muted)' }}>{isPa ? 'ਕਾਂਗਰਸ ਸਵਿੰਗ:' : 'INC Swing:'}</span>
               <div style={{ fontWeight: 700, color: (comp.inc_swing || booth.inc_swing || 0) >= 0 ? 'var(--color-gain)' : 'var(--color-loss)' }}>
                 {(comp.inc_swing || booth.inc_swing || 0) > 0 ? '+' : ''}{(comp.inc_swing || booth.inc_swing || 0)}%
               </div>
             </div>
             <div>
-              <span style={{ color: 'var(--text-muted)' }}>BJP Swing:</span>
+              <span style={{ color: 'var(--text-muted)' }}>{isPa ? 'ਭਾਜਪਾ ਸਵਿੰਗ:' : 'BJP Swing:'}</span>
               <div style={{ fontWeight: 700, color: (comp.bjp_swing || booth.bjp_swing || 0) >= 0 ? 'var(--color-gain)' : 'var(--color-loss)' }}>
                 {(comp.bjp_swing || booth.bjp_swing || 0) > 0 ? '+' : ''}{(comp.bjp_swing || booth.bjp_swing || 0)}%
               </div>

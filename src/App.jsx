@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import './App.css';
 import electionData from './data/majitha_comparison_data.json';
+import { translations } from './translations';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import PartyHub from './components/PartyHub';
@@ -28,6 +29,7 @@ import {
 
 export default function App() {
   const [theme, setTheme] = useState('light');
+  const [language, setLanguage] = useState(() => localStorage.getItem('dsidein_majitha_lang') || 'en');
   const [activeTab, setActiveTab] = useState('DASHBOARD');
   const [selectedParty, setSelectedParty] = useState('ALL'); // 'ALL', 'SAD', 'AAP', 'INC', 'BJP'
   const [partyFilter, setPartyFilter] = useState('ALL'); 
@@ -36,9 +38,25 @@ export default function App() {
   const [selectedBooth, setSelectedBooth] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const t = translations[language] || translations.en;
+  const isPa = language === 'pa';
+
+  const handleLanguageChange = (newLang) => {
+    setLanguage(newLang);
+    try {
+      localStorage.setItem('dsidein_majitha_lang', newLang);
+    } catch (e) {
+      // safe fallback
+    }
+  };
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('lang', language === 'pa' ? 'pa' : 'en');
+  }, [language]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
@@ -205,17 +223,17 @@ export default function App() {
     }, 300);
   };
 
-  const sortOptions = [
-    { value: 'BOOTH_ASC', label: 'Booth Number (1 → 187)' },
-    { value: 'BOOTH_DESC', label: 'Booth Number (187 → 1)' },
-    { value: 'SAD_VOTES_DESC', label: 'SAD Votes 2024 (Highest First)' },
-    { value: 'AAP_VOTES_DESC', label: 'AAP Votes 2024 (Highest First)' },
-    { value: 'INC_VOTES_DESC', label: 'INC Votes 2024 (Highest First)' },
-    { value: 'BJP_VOTES_DESC', label: 'BJP Votes 2024 (Highest First)' },
-    { value: 'MARGIN_DESC', label: 'Victory Margin 2024 (Highest First)' },
-    { value: 'SWING_DESC', label: 'AAP Swing % (Highest Gain)' },
-    { value: 'TURNOUT_DESC', label: '2024 Total Polled Votes (Highest First)' },
-  ];
+  const sortOptions = useMemo(() => [
+    { value: 'BOOTH_ASC', label: t?.sort_booth_asc || 'Booth Number (1 → 187)' },
+    { value: 'BOOTH_DESC', label: t?.sort_booth_desc || 'Booth Number (187 → 1)' },
+    { value: 'SAD_VOTES_DESC', label: t?.sort_sad_desc || 'SAD Votes 2024 (Highest First)' },
+    { value: 'AAP_VOTES_DESC', label: t?.sort_aap_desc || 'AAP Votes 2024 (Highest First)' },
+    { value: 'INC_VOTES_DESC', label: t?.sort_inc_desc || 'INC Votes 2024 (Highest First)' },
+    { value: 'BJP_VOTES_DESC', label: t?.sort_bjp_desc || 'BJP Votes 2024 (Highest First)' },
+    { value: 'MARGIN_DESC', label: t?.sort_margin_desc || 'Victory Margin 2024 (Highest First)' },
+    { value: 'SWING_DESC', label: t?.sort_swing_desc || 'AAP Swing % (Highest Gain)' },
+    { value: 'TURNOUT_DESC', label: t?.sort_turnout_desc || '2024 Total Polled Votes (Highest First)' },
+  ], [t]);
 
   return (
     <div className="dsidein-app-root">
@@ -225,6 +243,7 @@ export default function App() {
         onTabChange={handleTabChange}
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
+        t={t}
       />
 
       {/* Main Content Workspace */}
@@ -237,13 +256,16 @@ export default function App() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           filteredCount={filteredBooths.length}
+          language={language}
+          onLanguageChange={handleLanguageChange}
+          t={t}
         />
 
         {/* Dsidein Official PDF Watermark */}
         <div className="dsidein-print-watermark" aria-hidden="true">
           <img src="./dsidein_logo_transparent.png" alt="Dsidein" className="watermark-logo-img" />
           <div className="watermark-brand-name">DSIDEIN</div>
-          <div className="watermark-sub-name">FIELD INTELLIGENCE & TELEMETRY</div>
+          <div className="watermark-sub-name">{isPa ? '13-ਮਜੀਠਾ ਬੂਥ ਖੁਫੀਆ ਰਿਪੋਰਟ' : 'FIELD INTELLIGENCE & TELEMETRY'}</div>
           <div className="watermark-url">https://dsidein.com/majitha-2022-2024</div>
         </div>
 
@@ -252,13 +274,13 @@ export default function App() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '15pt', fontWeight: 800, color: '#002b49' }}>
-                13-MAJITHA ASSEMBLY SEGMENT (AMRITSAR PC)
+                {t?.segment_tag || '13-MAJITHA ASSEMBLY SEGMENT'} (AMRITSAR PC)
               </div>
               <div style={{ fontSize: '10pt', color: '#475569', marginTop: '2px' }}>
-                Comparative Booth Intelligence: 2022 Vidhan Sabha vs 2024 Lok Sabha Polling
+                {t?.main_subtitle || 'Comparative Booth Intelligence: 2022 Vidhan Sabha vs 2024 Lok Sabha Polling'}
               </div>
               <div style={{ fontSize: '8.5pt', color: '#64748b', marginTop: '4px' }}>
-                Active Filter: {selectedParty === 'ALL' ? 'Complete Master List' : `${selectedParty} Segment`} | Total Booths: {filteredBooths.length} of 187
+                {isPa ? 'ਸਰਗਰਮ ਫਿਲਟਰ: ' : 'Active Filter: '}{selectedParty === 'ALL' ? (isPa ? 'ਸੰਪੂਰਨ ਮਾਸਟਰ ਸੂਚੀ' : 'Complete Master List') : `${selectedParty} Segment`} | {isPa ? 'ਕੁੱਲ ਬੂਥ: ' : 'Total Booths: '}{filteredBooths.length} of 187
               </div>
             </div>
             <div style={{ textAlign: 'right', fontSize: '8.5pt', color: '#334155' }}>
@@ -273,10 +295,10 @@ export default function App() {
           {/* Refined Page Title Bar */}
           <section className="dashboard-title-bar">
             <div className="title-text-group">
-              <div className="constituency-tag">13-MAJITHA ASSEMBLY SEGMENT</div>
-              <h1 className="main-title">Comparative Booth Intelligence</h1>
+              <div className="constituency-tag">{t?.segment_tag || '13-MAJITHA ASSEMBLY SEGMENT'}</div>
+              <h1 className="main-title">{t?.main_title || 'Comparative Booth Intelligence'}</h1>
               <p className="main-subtitle">
-                2022 Vidhan Sabha vs 2024 Lok Sabha Polling Telemetry across all 187 Polling Stations (Amritsar PC)
+                {t?.main_subtitle || '2022 Vidhan Sabha vs 2024 Lok Sabha Polling Telemetry across all 187 Polling Stations (Amritsar PC)'}
               </p>
             </div>
 
@@ -285,39 +307,39 @@ export default function App() {
                 href="./Majitha_Master_Booth_Analysis_AAP_INC.xlsx" 
                 download="Majitha_Master_Booth_Analysis_AAP_INC.xlsx"
                 className="pill-action-btn green"
-                title="Download Master Analysis Spreadsheet (Excel .xlsx with SAD/AAP/INC/BJP Sheets)"
+                title={t?.action_excel_title || 'Download Master Analysis Spreadsheet (Excel .xlsx with SAD/AAP/INC/BJP Sheets)'}
               >
                 <span className="pill-btn-icon"><FileSpreadsheet size={14} /></span>
-                <span className="pill-btn-label">Master Excel</span>
+                <span className="pill-btn-label">{t?.action_excel || 'Master Excel'}</span>
               </a>
 
               <a 
                 href="./Majitha_Detailed_Boothwise_Masterplan.pdf" 
                 download="Majitha_Detailed_Boothwise_Masterplan.pdf"
                 className="pill-action-btn purple"
-                title="Download Complete 187-Booth Master Plan in English (PDF with Watermark)"
+                title={t?.action_plan_en_title || 'Download Complete 187-Booth Master Plan in English (PDF with Watermark)'}
               >
                 <span className="pill-btn-icon"><ClipboardList size={14} /></span>
-                <span className="pill-btn-label">Master Plan (English PDF)</span>
+                <span className="pill-btn-label">{t?.action_plan_en || 'Master Plan (English PDF)'}</span>
               </a>
 
               <a 
                 href="./Majitha_Detailed_Boothwise_Masterplan_Punjabi.pdf" 
                 download="Majitha_Detailed_Boothwise_Masterplan_Punjabi.pdf"
                 className="pill-action-btn amber"
-                title="Download 187 Boothwise Detailed Field Operations Plan in Punjabi (PDF with Watermark)"
+                title={t?.action_plan_pa_title || 'Download 187 Boothwise Detailed Field Operations Plan in Punjabi (PDF with Watermark)'}
               >
                 <span className="pill-btn-icon"><ClipboardList size={14} /></span>
-                <span className="pill-btn-label">187 ਬੂਥ ਮਾਸਟਰ ਪਲਾਨ (ਪੰਜਾਬੀ PDF)</span>
+                <span className="pill-btn-label">{t?.action_plan_pa || '187 ਬੂਥ ਮਾਸਟਰ ਪਲਾਨ (ਪੰਜਾਬੀ PDF)'}</span>
               </a>
 
               <button 
                 onClick={handlePrintMasterReport}
                 className="pill-action-btn outline"
-                title="Export Current View as PDF with Dsidein Watermark"
+                title={t?.action_export_pdf_title || 'Export Current View as PDF with Dsidein Watermark'}
               >
                 <span className="pill-btn-icon"><Printer size={14} /></span>
-                <span className="pill-btn-label">Export PDF</span>
+                <span className="pill-btn-label">{t?.action_export_pdf || 'Export PDF'}</span>
               </button>
             </div>
           </section>
@@ -331,10 +353,10 @@ export default function App() {
                   <Compass size={18} />
                 </div>
               </div>
-              <div className="kpi-label">POLLING STATIONS</div>
-              <div className="kpi-value text-blue">187 Booths</div>
+              <div className="kpi-label">{t?.kpi_booths_label || 'POLLING STATIONS'}</div>
+              <div className="kpi-value text-blue">{t?.kpi_booths_val || '187 Booths'}</div>
               <div className="kpi-sub-pill text-blue">
-                ● 100% Monitored & Verified
+                {t?.kpi_booths_sub || '● 100% Monitored & Verified'}
               </div>
             </div>
 
@@ -345,10 +367,10 @@ export default function App() {
                   <Activity size={18} />
                 </div>
               </div>
-              <div className="kpi-label">2024 EVM POLLED</div>
-              <div className="kpi-value">103,790</div>
+              <div className="kpi-label">{t?.kpi_evm_label || '2024 EVM POLLED'}</div>
+              <div className="kpi-value">{t?.kpi_evm_val || '103,790'}</div>
               <div className="kpi-sub-pill text-orange">
-                ● 100% Form-20 EVM Match
+                {t?.kpi_evm_sub || '● 100% Form-20 EVM Match'}
               </div>
             </div>
 
@@ -359,10 +381,10 @@ export default function App() {
                   <CheckCircle2 size={18} />
                 </div>
               </div>
-              <div className="kpi-label">SAD (ANIL JOSHI)</div>
-              <div className="kpi-value text-blue">40,981</div>
+              <div className="kpi-label">{t?.kpi_sad_label || 'SAD (ANIL JOSHI)'}</div>
+              <div className="kpi-value text-blue">{t?.kpi_sad_val || '40,981'}</div>
               <div className="kpi-sub-pill text-blue">
-                ● 129 Wins (39.5% Share | +12,451 Lead)
+                {t?.kpi_sad_sub || '● 129 Wins (39.5% Share | +12,451 Lead)'}
               </div>
             </div>
 
@@ -373,10 +395,10 @@ export default function App() {
                   <BarChart3 size={18} />
                 </div>
               </div>
-              <div className="kpi-label">AAP (KULDEEP DHALIWAL)</div>
-              <div className="kpi-value text-orange">28,530</div>
+              <div className="kpi-label">{t?.kpi_aap_label || 'AAP (KULDEEP DHALIWAL)'}</div>
+              <div className="kpi-value text-orange">{t?.kpi_aap_val || '28,530'}</div>
               <div className="kpi-sub-pill text-orange">
-                ● 39 Wins (27.5% Share | +22 Booth Gain)
+                {t?.kpi_aap_sub || '● 39 Wins (27.5% Share | +22 Booth Gain)'}
               </div>
             </div>
           </section>
@@ -387,11 +409,11 @@ export default function App() {
             <div className="registry-card-header">
               <div className="registry-title-group">
                 <div className="registry-title-row">
-                  <h2 className="registry-title">Booth Performance Registry</h2>
-                  <span className="registry-booth-count">{filteredBooths.length} Booths</span>
+                  <h2 className="registry-title">{t?.registry_title || 'Booth Performance Registry'}</h2>
+                  <span className="registry-booth-count">{filteredBooths.length} {t?.booths_count || 'Booths'}</span>
                 </div>
                 <p className="registry-subtitle">
-                  Detailed booth-by-booth vote tally, turnout, winners, and margin shifts across 13-Majitha
+                  {t?.registry_subtitle || 'Detailed booth-by-booth vote tally, turnout, winners, and margin shifts across 13-Majitha'}
                 </p>
               </div>
 
@@ -402,7 +424,7 @@ export default function App() {
                   title="Reset all filters to complete view"
                 >
                   <RotateCcw size={14} />
-                  <span>Reset All</span>
+                  <span>{t?.reset_all || 'Reset All'}</span>
                 </button>
               </div>
             </div>
@@ -415,6 +437,8 @@ export default function App() {
               setPartyFilter={setPartyFilter}
               partyStats={partyStats}
               summary={summary}
+              language={language}
+              t={t}
             />
 
             {/* Search & Sort Sub-Toolbar */}
@@ -426,8 +450,8 @@ export default function App() {
                   className="toolbar-search-input"
                   placeholder={
                     selectedParty === 'ALL'
-                      ? 'Search all 187 booths by number or locality (e.g. 104, Kathu Nangal, ਕੱਥੂਨੰਗਲ)...'
-                      : `Search ${selectedParty} performance by booth no. or locality (e.g. 25, Chawinda Devi)...`
+                      ? (t?.search_registry_all || 'Search all 187 booths by number or locality (e.g. 104, Kathu Nangal, ਕੱਥੂਨੰਗਲ)...')
+                      : (t?.search_registry_party?.replace('{party}', selectedParty) || `Search ${selectedParty} performance by booth no. or locality...`)
                   }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -452,14 +476,14 @@ export default function App() {
                   title="Export Current Table View as PDF with Dsidein Watermark"
                 >
                   <Printer size={14} />
-                  <span>Export PDF</span>
+                  <span>{t?.action_export_pdf || 'Export PDF'}</span>
                 </button>
 
                 <CustomDropdown
                   value={sortBy}
                   onChange={setSortBy}
                   options={sortOptions}
-                  label="Sort order"
+                  label={t?.sort_order_label || 'Sort order'}
                 />
               </div>
             </div>
@@ -473,6 +497,8 @@ export default function App() {
               onClearSearch={() => setSearchQuery('')}
               onSelectBooth={(b) => setSelectedBooth(b)}
               onExportBoothPdf={handleExportBoothPdf}
+              language={language}
+              t={t}
             />
           </section>
         </main>
@@ -483,6 +509,8 @@ export default function App() {
         <BoothModal 
           booth={selectedBooth}
           onClose={() => setSelectedBooth(null)}
+          language={language}
+          t={t}
         />
       )}
     </div>

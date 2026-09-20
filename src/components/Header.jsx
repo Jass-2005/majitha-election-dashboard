@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sun, Moon, Menu, ChevronDown, Search, X } from 'lucide-react';
+import LanguageDropdown from './LanguageDropdown';
 
 export default function Header({ 
   theme, 
@@ -7,7 +8,10 @@ export default function Header({
   onMenuClick,
   searchQuery,
   setSearchQuery,
-  filteredCount
+  filteredCount,
+  language = 'en',
+  onLanguageChange,
+  t
 }) {
   return (
     <header className="app-header no-print">
@@ -23,9 +27,9 @@ export default function Header({
           </button>
           
           <div className="header-section-label">
-            <span className="section-title-text">DASHBOARD</span>
+            <span className="section-title-text">{t?.header_section || 'DASHBOARD'}</span>
             <span className="header-separator">/</span>
-            <span className="header-crumb">13-MAJITHA</span>
+            <span className="header-crumb">{t?.header_crumb || '13-MAJITHA'}</span>
           </div>
         </div>
 
@@ -36,7 +40,7 @@ export default function Header({
             <input 
               type="text" 
               className="header-search-input"
-              placeholder="Search 187 booths, localities, numbers..."
+              placeholder={t?.search_placeholder_desktop || 'Search 187 booths, localities, numbers...'}
               value={searchQuery || ''}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="Search booths or villages"
@@ -57,14 +61,20 @@ export default function Header({
           </div>
         </div>
 
-        {/* Right: Theme & Dsidein User Profile */}
+        {/* Right: Language, Theme & Dsidein User Profile */}
         <div className="header-right">
+          {/* Language Switcher Dropdown */}
+          <LanguageDropdown 
+            language={language} 
+            onLanguageChange={onLanguageChange} 
+          />
+
           {/* Theme Toggle */}
           <button 
             className="btn-icon" 
             onClick={toggleTheme} 
             aria-label="Toggle Theme"
-            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            title={theme === 'dark' ? (t?.theme_switch_light || 'Switch to Light Mode') : (t?.theme_switch_dark || 'Switch to Dark Mode')}
           >
             {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
           </button>
@@ -91,7 +101,7 @@ export default function Header({
           <input 
             type="text" 
             className="header-search-input mobile-input"
-            placeholder="Search booth number, village, or locality..."
+            placeholder={t?.search_placeholder_mobile || 'Search booth number, village, or locality...'}
             value={searchQuery || ''}
             onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="Search 187 booths"
