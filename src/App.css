@@ -1877,6 +1877,146 @@
   color: var(--text-muted);
 }
 
+.card-booth-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.card-booth-badge.renumbered {
+  background: rgba(234, 88, 12, 0.08);
+  border: 1px solid rgba(234, 88, 12, 0.25);
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  color: #c2410c;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="dark"] .card-booth-badge.renumbered {
+  background: rgba(234, 88, 12, 0.15);
+  border-color: rgba(234, 88, 12, 0.35);
+  color: #fb923c;
+}
+
+.booth-primary-tag {
+  font-weight: 800;
+  color: #c2410c;
+}
+
+[data-theme="dark"] .booth-primary-tag {
+  color: #fb923c;
+}
+
+.booth-renumbered-divider {
+  color: var(--border-medium);
+  font-weight: 400;
+}
+
+.booth-secondary-tag {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.pill-renumbered-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+[data-theme="dark"] .pill-renumbered-badge {
+  background: rgba(234, 88, 12, 0.18);
+  color: #fdba74;
+  border-color: rgba(234, 88, 12, 0.4);
+}
+
+.pill-renumbered-badge.modal-pill {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+}
+
+.card-renumbered-note {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #c2410c;
+  margin-top: -6px;
+  margin-bottom: 8px;
+}
+
+[data-theme="dark"] .card-renumbered-note {
+  color: #fb923c;
+}
+
+.table-booth-badge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.table-booth-2022-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #c2410c;
+  background: #fff7ed;
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid #fed7aa;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .table-booth-2022-tag {
+  background: rgba(234, 88, 12, 0.18);
+  color: #fdba74;
+  border-color: rgba(234, 88, 12, 0.35);
+}
+
+.modal-renumbered-banner {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid #ea580c;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+[data-theme="dark"] .modal-renumbered-banner {
+  background: rgba(234, 88, 12, 0.1);
+  border-color: rgba(234, 88, 12, 0.3);
+  border-left-color: #ea580c;
+}
+
+.renumbered-banner-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #9a3412;
+  margin-bottom: 3px;
+}
+
+[data-theme="dark"] .renumbered-banner-title {
+  color: #fb923c;
+}
+
+.renumbered-banner-text {
+  font-size: 0.78125rem;
+  color: #7c2d12;
+  line-height: 1.45;
+}
+
+[data-theme="dark"] .renumbered-banner-text {
+  color: #fed7aa;
+}
+
 .card-village-name {
   font-size: 0.95rem;
   font-weight: 700;

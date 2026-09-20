@@ -62,8 +62,17 @@ export default function BoothModal({ booth, onClose, language = 'en', t }) {
         {/* Modal Header */}
         <div className="modal-header">
           <div>
-            <div className="modal-badges-row" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="brand-badge">{t?.modal_booth_prefix || 'Booth #'}{booth.booth_no}</span>
+            <div className="modal-badges-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <span className="brand-badge">
+                {(booth.is_renumbered || (booth.booth_no_2022 && booth.booth_no_2022 !== (booth.booth_no_2024 || booth.booth_no)))
+                  ? `2024: #${booth.booth_no_2024 || booth.booth_no} | 2022: #${booth.booth_no_2022}`
+                  : `${t?.modal_booth_prefix || 'Booth #'}${booth.booth_no_2024 || booth.booth_no}`}
+              </span>
+              {(booth.is_renumbered || (booth.booth_no_2022 && booth.booth_no_2022 !== (booth.booth_no_2024 || booth.booth_no))) && (
+                <span className="pill-renumbered-badge modal-pill" title={isPa ? `2022 ਵਿੱਚ ਇਹ ਬੂਥ #${booth.booth_no_2022} ਸੀ` : `In 2022 this station was Booth #${booth.booth_no_2022}`}>
+                  ⚡ {isPa ? 'ਰੀਨੰਬਰ ਕੀਤਾ ਬੂਥ' : 'Renumbered Station'}
+                </span>
+              )}
               <span className={`status-badge ${comp.is_flip ? 'flipped' : 'retained'}`}>
                 {statusLabel}
               </span>
@@ -88,11 +97,30 @@ export default function BoothModal({ booth, onClose, language = 'en', t }) {
           </div>
         </div>
 
+        {/* Renumbered Notice Banner if booth rearranged */}
+        {(booth.is_renumbered || (booth.booth_no_2022 && booth.booth_no_2022 !== (booth.booth_no_2024 || booth.booth_no))) && (
+          <div className="modal-renumbered-banner">
+            <div className="renumbered-banner-title">
+              ⚡ {isPa ? 'ਅਧਿਕਾਰਤ ਬੂਥ ਰੀਨੰਬਰਿੰਗ ਜਾਣਕਾਰੀ (Official Renumbering)' : 'Official Polling Station Renumbering Notice'}
+            </div>
+            <div className="renumbered-banner-text">
+              {isPa
+                ? `2024 ਲੋਕ ਸਭਾ ਚੋਣ ਵਿੱਚ ਇਹ ਪੋਲਿੰਗ ਸਟੇਸ਼ਨ ਬੂਥ #${booth.booth_no_2024 || booth.booth_no} (${booth.village_punjabi}) ਹੈ। 2022 ਵਿਧਾਨ ਸਭਾ ਚੋਣ ਵਿੱਚ ਇਹ ਪੋਲਿੰਗ ਸਟੇਸ਼ਨ ਬੂਥ #${booth.booth_no_2022} (${booth.village_2022_pa || booth.village_punjabi}) ਸੀ। ਦੋਵਾਂ ਚੋਣਾਂ ਦਾ ਫਾਰਮ-20 ਡਾਟਾ ਬੂਥ ਨੰਬਰ ਅਨੁਸਾਰ ਸਹੀ ਤਰੀਕੇ ਨਾਲ ਮੇਲਿਆ ਗਿਆ ਹੈ।`
+                : `In the 2024 Lok Sabha election, this polling station was numbered #${booth.booth_no_2024 || booth.booth_no} (${booth.village_english}). In the 2022 Vidhan Sabha election, it was listed at Booth #${booth.booth_no_2022} (${booth.village_2022_en || booth.village_english}). Form-20 EVM vote telemetry has been accurately matched.`
+              }
+            </div>
+          </div>
+        )}
+
         {/* Side-by-side Comparative Cards */}
         <div className="compare-grid">
           {/* 2022 Vidhan Sabha Column */}
           <div className="year-card">
-            <div className="year-title">{isPa ? '2022 ਵਿਧਾਨ ਸਭਾ ਚੋਣ' : '2022 Vidhan Sabha Election'}</div>
+            <div className="year-title">
+              {isPa 
+                ? `2022 ਵਿਧਾਨ ਸਭਾ ਚੋਣ (ਬੂਥ #${booth.booth_no_2022 || booth.booth_no})` 
+                : `2022 Vidhan Sabha (Booth #${booth.booth_no_2022 || booth.booth_no})`}
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
               <span className={`badge-winner ${d22.winner_party}`}>
                 {d22.winner_party} Won
@@ -155,7 +183,11 @@ export default function BoothModal({ booth, onClose, language = 'en', t }) {
 
           {/* 2024 Lok Sabha Column */}
           <div className="year-card">
-            <div className="year-title">{isPa ? '2024 ਲੋਕ ਸਭਾ ਚੋਣ' : '2024 Lok Sabha Election'}</div>
+            <div className="year-title">
+              {isPa 
+                ? `2024 ਲੋਕ ਸਭਾ ਚੋਣ (ਬੂਥ #${booth.booth_no_2024 || booth.booth_no})` 
+                : `2024 Lok Sabha (Booth #${booth.booth_no_2024 || booth.booth_no})`}
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
               <span className={`badge-winner ${d24.winner_party}`}>
                 {d24.winner_party} {isPa ? 'ਜਿੱਤ' : 'Won'}

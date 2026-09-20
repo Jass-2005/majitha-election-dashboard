@@ -55,6 +55,11 @@ export const translations = {
     search_registry_all: 'Search all 187 booths by number or locality (e.g. 104, Kathu Nangal, ਕੱਥੂਨੰਗਲ)...',
     search_registry_party: 'Search {party} performance by booth no. or locality (e.g. 25, Chawinda Devi)...',
     sort_order_label: 'Sort order',
+    label_booth_2024: '2024 Booth',
+    label_booth_2022: '2022 Booth',
+    pill_renumbered: 'Renumbered',
+    renumbered_desc: 'Renumbered from 2022 Booth #{b22}',
+    renumbered_badge: 'Renumbered Station',
 
     // Party Hub Tabs
     tab_all_booths: 'All Booths',
@@ -202,6 +207,11 @@ export const translations = {
     search_registry_all: 'ਸਾਰੇ 187 ਬੂਥ ਨੰਬਰ ਜਾਂ ਪਿੰਡ ਨਾਲ ਖੋਜੋ (ਜਿਵੇਂ 104, ਕੱਥੂਨੰਗਲ, ਸੋਹੀਆਂ)...',
     search_registry_party: '{party} ਕਾਰਗੁਜ਼ਾਰੀ ਬੂਥ ਨੰਬਰ ਜਾਂ ਪਿੰਡ ਨਾਲ ਖੋਜੋ (ਜਿਵੇਂ 25, ਚਵਿੰਡਾ ਦੇਵੀ)...',
     sort_order_label: 'ਤਰਤੀਬ ਚੁਣੋ',
+    label_booth_2024: '2024 ਬੂਥ',
+    label_booth_2022: '2022 ਬੂਥ',
+    pill_renumbered: 'ਰੀਨੰਬਰ ਕੀਤਾ',
+    renumbered_desc: '2022 ਬੂਥ #{b22} ਤੋਂ ਬਦਲਿਆ',
+    renumbered_badge: 'ਰੀਨੰਬਰ ਕੀਤਾ ਬੂਥ',
 
     // Party Hub Tabs
     tab_all_booths: 'ਸਾਰੇ ਬੂਥ',

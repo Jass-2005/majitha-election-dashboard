@@ -134,18 +134,24 @@ export default function App() {
     // 1. Search Query
     if (searchQuery.trim()) {
       const rawQ = searchQuery.toLowerCase().trim();
-      const cleanNum = rawQ.replace(/^(booth|b|#)\s*[-:]?\s*/i, '').trim();
       result = result.filter(b => {
-        const bNo = b.booth_no.toString().toLowerCase();
+        const bNo24 = (b.booth_no_2024 || b.booth_no).toString().toLowerCase();
+        const bNo22 = (b.booth_no_2022 || '').toString().toLowerCase();
         const vEn = (b.village_english || b.village_en || '').toLowerCase();
         const vPa = (b.village_punjabi || b.village_pa || '');
+        const v22En = (b.village_2022_en || '').toLowerCase();
+        const v22Pa = (b.village_2022_pa || '');
         
         return (
-          bNo === rawQ ||
-          bNo === cleanNum ||
-          (cleanNum.length > 0 && bNo.startsWith(cleanNum)) ||
+          bNo24 === rawQ ||
+          bNo24 === cleanNum ||
+          bNo22 === rawQ ||
+          bNo22 === cleanNum ||
+          (cleanNum.length > 0 && (bNo24.startsWith(cleanNum) || bNo22.startsWith(cleanNum))) ||
           vEn.includes(rawQ) ||
-          vPa.includes(rawQ)
+          vPa.includes(rawQ) ||
+          v22En.includes(rawQ) ||
+          v22Pa.includes(rawQ)
         );
       });
     }

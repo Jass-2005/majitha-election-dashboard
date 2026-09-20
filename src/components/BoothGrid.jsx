@@ -155,7 +155,14 @@ export default function BoothGrid({
                       title={`Click to inspect Booth #${b.booth_no}`}
                     >
                       <td style={{ textAlign: 'center' }}>
-                        <span className="booth-avatar-badge">{b.booth_no}</span>
+                        <div className="table-booth-badge-wrap">
+                          <span className="booth-avatar-badge">#{b.booth_no_2024 || b.booth_no}</span>
+                          {(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) && (
+                            <span className="table-booth-2022-tag" title={isPa ? `2022 ਵਿੱਚ ਬੂਥ #${b.booth_no_2022} ਸੀ` : `In 2022: Booth #${b.booth_no_2022}`}>
+                              '22: #{b.booth_no_2022}
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       <td>
@@ -259,7 +266,14 @@ export default function BoothGrid({
                     title={`Click to inspect Booth #${b.booth_no}`}
                   >
                     <td style={{ textAlign: 'center' }}>
-                      <span className="booth-avatar-badge">{b.booth_no}</span>
+                      <div className="table-booth-badge-wrap">
+                        <span className="booth-avatar-badge">#{b.booth_no_2024 || b.booth_no}</span>
+                        {(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) && (
+                          <span className="table-booth-2022-tag" title={isPa ? `2022 ਵਿੱਚ ਬੂਥ #${b.booth_no_2022} ਸੀ` : `In 2022: Booth #${b.booth_no_2022}`}>
+                            '22: #{b.booth_no_2022}
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td>
@@ -356,7 +370,24 @@ export default function BoothGrid({
                   onClick={() => onSelectBooth(b)}
                 >
                   <div className="card-top-row">
-                    <span className="card-booth-badge">#{b.booth_no}</span>
+                    <div className="card-booth-badge-group">
+                      <span className={`card-booth-badge ${(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) ? 'renumbered' : ''}`}>
+                        {(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) ? (
+                          <>
+                            <span className="booth-primary-tag">2024: #{b.booth_no_2024 || b.booth_no}</span>
+                            <span className="booth-renumbered-divider">|</span>
+                            <span className="booth-secondary-tag">2022: #{b.booth_no_2022}</span>
+                          </>
+                        ) : (
+                          `#${b.booth_no_2024 || b.booth_no}`
+                        )}
+                      </span>
+                      {(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) && (
+                        <span className="pill-renumbered-badge" title={isPa ? `2022 ਵਿੱਚ ਇਹ ਬੂਥ #${b.booth_no_2022} ਸੀ` : `In 2022 this station was Booth #${b.booth_no_2022}`}>
+                          ⚡ {isPa ? 'ਰੀਨੰਬਰ' : 'Renumbered'}
+                        </span>
+                      )}
+                    </div>
                     <span className={`cat-pill ${isFlip ? 'lost' : 'won'}`}>
                       {statusLabel}
                     </span>
@@ -368,6 +399,13 @@ export default function BoothGrid({
                   <div className={`card-village-punjabi ${!isPa ? 'punjabi-font' : ''}`} style={isPa ? { fontSize: '0.8125rem', color: 'var(--text-muted)' } : {}}>
                     {secondaryVillage}
                   </div>
+                  {(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) && (
+                    <div className="card-renumbered-note">
+                      {isPa
+                        ? `(2022 ਵਿੱਚ: ਬੂਥ #${b.booth_no_2022} ${b.village_2022_pa || ''})`
+                        : `(In 2022: Booth #${b.booth_no_2022} ${b.village_2022_en || ''})`}
+                    </div>
+                  )}
 
                   <div className="card-stats-box">
                     <div className="card-stat-col">
@@ -444,7 +482,24 @@ export default function BoothGrid({
                 onClick={() => onSelectBooth(b)}
               >
                 <div className="card-top-row">
-                  <span className="card-booth-badge">#{b.booth_no}</span>
+                  <div className="card-booth-badge-group">
+                    <span className={`card-booth-badge ${(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) ? 'renumbered' : ''}`}>
+                      {(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) ? (
+                        <>
+                          <span className="booth-primary-tag">2024: #{b.booth_no_2024 || b.booth_no}</span>
+                          <span className="booth-renumbered-divider">|</span>
+                          <span className="booth-secondary-tag">2022: #{b.booth_no_2022}</span>
+                        </>
+                      ) : (
+                        `#${b.booth_no_2024 || b.booth_no}`
+                      )}
+                    </span>
+                    {(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) && (
+                      <span className="pill-renumbered-badge" title={isPa ? `2022 ਵਿੱਚ ਇਹ ਬੂਥ #${b.booth_no_2022} ਸੀ` : `In 2022 this station was Booth #${b.booth_no_2022}`}>
+                        ⚡ {isPa ? 'ਰੀਨੰਬਰ' : 'Renumbered'}
+                      </span>
+                    )}
+                  </div>
                   <span className={`cat-pill ${catClass}`}>{catLabel}</span>
                 </div>
 
@@ -454,6 +509,13 @@ export default function BoothGrid({
                 <div className={`card-village-punjabi ${!isPa ? 'punjabi-font' : ''}`} style={isPa ? { fontSize: '0.8125rem', color: 'var(--text-muted)' } : {}}>
                   {secondaryVillage}
                 </div>
+                {(b.is_renumbered || (b.booth_no_2022 && b.booth_no_2022 !== (b.booth_no_2024 || b.booth_no))) && (
+                  <div className="card-renumbered-note">
+                    {isPa
+                      ? `(2022 ਵਿੱਚ: ਬੂਥ #${b.booth_no_2022} ${b.village_2022_pa || ''})`
+                      : `(In 2022: Booth #${b.booth_no_2022} ${b.village_2022_en || ''})`}
+                  </div>
+                )}
 
                 <div className="card-stats-box">
                   <div className="card-stat-col">
