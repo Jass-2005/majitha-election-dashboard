@@ -8,6 +8,9 @@
 .dsidein-app-root {
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
@@ -123,13 +126,17 @@
   border-color: var(--border-medium);
 }
 
-/* 2. Content Frame */
+/* 2. Content Frame & Canvas */
+.dsidein-content-canvas,
 .dsidein-content-frame {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  max-width: 100%;
+  width: 100%;
   position: relative;
+  overflow-x: hidden;
 }
 
 /* 3. Top Navigation Header */
@@ -1468,6 +1475,9 @@
   border: none;
   border-radius: 0;
   overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .clean-table {
@@ -2615,7 +2625,22 @@
   }
 
   /* Table on Mobile: Sticky first column & smooth panning */
+  .mobile-table-swipe-hint {
+    display: block;
+    padding: 6px 12px;
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    background: var(--bg-surface-elevated);
+    border-bottom: 1px solid var(--border-subtle);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+
   .clean-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     position: relative;
   }
@@ -2670,34 +2695,36 @@
 
   /* Modal on Mobile */
   .modal-overlay {
-    padding: 8px;
+    padding: 0;
+    align-items: flex-end;
   }
 
   .modal-content {
     width: 100%;
     max-width: 100%;
-    max-height: 94vh;
-    padding: 16px 14px;
-    border-radius: 16px;
+    max-height: 92vh;
+    padding: 16px 14px 28px 14px;
+    border-radius: 20px 20px 0 0;
     margin: 0;
     -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
   }
 
   .modal-header {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     padding-bottom: 12px;
-    padding-right: 44px; /* Space for pinned close button */
+    padding-right: 48px; /* Space for pinned close button */
   }
 
   .modal-close {
     position: absolute;
     top: 0;
     right: 0;
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2705,10 +2732,12 @@
     background: var(--bg-surface-elevated);
     border: 1px solid var(--border-subtle);
     color: var(--text-primary);
+    z-index: 10;
   }
 
-  .modal-header-right {
+  .modal-header-actions {
     width: 100%;
+    margin-top: 6px;
   }
 
   .btn-print-modal {

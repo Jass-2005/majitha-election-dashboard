@@ -66,7 +66,7 @@ export default function BoothModal({ booth, onClose }) {
               {booth.village_punjabi || booth.village_pa}
             </p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="modal-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button 
               className="btn-print-modal no-print" 
               onClick={handlePrintBooth}

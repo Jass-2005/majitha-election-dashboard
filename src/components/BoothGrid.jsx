@@ -8,7 +8,12 @@ export default function BoothGrid({
   onExportBoothPdf,
   partyFilter 
 }) {
-  const [viewMode, setViewMode] = useState('LIST'); // 'LIST' or 'GRID'
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 'GRID';
+    }
+    return 'LIST';
+  });
 
   const isAllMode = selectedParty === 'ALL';
   const pKey = selectedParty.toLowerCase(); // 'sad', 'aap', 'inc', 'bjp'
@@ -76,6 +81,9 @@ export default function BoothGrid({
       {/* VIEW MODE 1: CLEAN LIST TABLE */}
       {viewMode === 'LIST' && (
         <div className="clean-table-wrap">
+          <div className="mobile-table-swipe-hint hide-desktop">
+            <span>⇄ Swipe horizontally to view all results</span>
+          </div>
           <table className="clean-table">
             <thead>
               {isAllMode ? (
