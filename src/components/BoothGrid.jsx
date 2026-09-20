@@ -6,7 +6,9 @@ export default function BoothGrid({
   selectedParty, 
   onSelectBooth,
   onExportBoothPdf,
-  partyFilter 
+  partyFilter,
+  searchQuery,
+  onClearSearch
 }) {
   const [viewMode, setViewMode] = useState(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
@@ -21,10 +23,19 @@ export default function BoothGrid({
   if (booths.length === 0) {
     return (
       <div className="empty-state">
-        <p style={{ fontSize: '1rem', fontWeight: 600 }}>No booths match the selected criteria.</p>
+        <p style={{ fontSize: '1rem', fontWeight: 600 }}>No booths match {searchQuery ? `"${searchQuery}"` : 'the selected criteria'}.</p>
         <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-          Try clearing the search query or category filter.
+          Try searching for a different booth number, village name (e.g. 104, Sohian, ਮਜੀਠਾ) or clear the filter.
         </p>
+        {searchQuery && onClearSearch && (
+          <button 
+            className="btn-registry-reset"
+            style={{ marginTop: '14px', display: 'inline-flex' }}
+            onClick={onClearSearch}
+          >
+            Clear Search
+          </button>
+        )}
       </div>
     );
   }

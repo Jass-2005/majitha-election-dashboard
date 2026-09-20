@@ -22,7 +22,8 @@ import {
   ExternalLink,
   ShieldAlert,
   Database,
-  ClipboardList
+  ClipboardList,
+  X
 } from 'lucide-react';
 
 export default function App() {
@@ -114,14 +115,21 @@ export default function App() {
 
     // 1. Search Query
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      result = result.filter(b => 
-        b.booth_no.toString().toLowerCase() === q ||
-        (b.village_english && b.village_english.toLowerCase().includes(q)) ||
-        (b.village_en && b.village_en.toLowerCase().includes(q)) ||
-        (b.village_punjabi && b.village_punjabi.includes(q)) ||
-        (b.village_pa && b.village_pa.includes(q))
-      );
+      const rawQ = searchQuery.toLowerCase().trim();
+      const cleanNum = rawQ.replace(/^(booth|b|#)\s*[-:]?\s*/i, '').trim();
+      result = result.filter(b => {
+        const bNo = b.booth_no.toString().toLowerCase();
+        const vEn = (b.village_english || b.village_en || '').toLowerCase();
+        const vPa = (b.village_punjabi || b.village_pa || '');
+        
+        return (
+          bNo === rawQ ||
+          bNo === cleanNum ||
+          (cleanNum.length > 0 && bNo.startsWith(cleanNum)) ||
+          vEn.includes(rawQ) ||
+          vPa.includes(rawQ)
+        );
+      });
     }
 
     // 2. Party Selector & Sub-Filter Pills
@@ -228,6 +236,7 @@ export default function App() {
           onMenuClick={() => setMobileMenuOpen(prev => !prev)} 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          filteredCount={filteredBooths.length}
         />
 
         {/* Dsidein Official PDF Watermark */}
@@ -424,6 +433,16 @@ export default function App() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label="Filter booths"
                 />
+                {searchQuery && (
+                  <button 
+                    className="btn-clear-search toolbar-clear" 
+                    onClick={() => setSearchQuery('')}
+                    title="Clear search"
+                    aria-label="Clear search"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
               </div>
 
               <div className="toolbar-controls">
@@ -450,6 +469,8 @@ export default function App() {
               booths={filteredBooths}
               selectedParty={selectedParty}
               partyFilter={partyFilter}
+              searchQuery={searchQuery}
+              onClearSearch={() => setSearchQuery('')}
               onSelectBooth={(b) => setSelectedBooth(b)}
               onExportBoothPdf={handleExportBoothPdf}
             />
